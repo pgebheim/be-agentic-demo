@@ -40,22 +40,38 @@ Small, pure, unit-testable Rust. These are the first tickets.
   (child.parent_digest == genesis.digest). This is the first moment it is
   actually a *chain*.
 
-### Milestone 1 — consensus core (north star)
+### Milestone 1 — a chain that grows (single node)
+
+A local chain that extends itself — no consensus yet. Three **interleaved**
+tickets on one shared integration branch (this milestone is an *epic*):
+
+- **CHN-1 · Block store.** An in-memory store: append a block, get by height and
+  by digest, track the head. Unit-tested. (depends on Milestone 0 types)
+- **CHN-2 · Chain-append.** Mint the next block from a set of transactions,
+  linking `parent_digest` to the current head, and append it. A test appends
+  several blocks and verifies the links form a chain. (depends on CHN-1 + util)
+- **CHN-3 · Node.** A `node` binary that mints a block every few seconds and
+  appends it — the chain grows on its own, printing the head each tick.
+  (depends on CHN-2)
+
+This is the milestone the demo **kicks off as an epic** and leaves running.
+
+### Milestone 2 — consensus core (north star)
 
 Compose a BFT consensus library so ≥4 local validators agree on block order;
 finalized blocks are reported in a deduped, ordered stream.
 
-### Milestone 2 — validator node
+### Milestone 3 — validator node
 
 A `validator` binary: dev keypair/identity, engine boot, and a script to run a
 local cluster of validators that finalizes a growing chain.
 
-### Milestone 3 — indexer
+### Milestone 4 — indexer
 
 Consume finalized blocks and serve them over a REST API (latest / by-height /
 by-digest) plus a WebSocket stream of new finalizations.
 
-### Milestone 4 — explorer
+### Milestone 5 — explorer
 
 A small web UI that renders the live chain from the indexer: a list of recent
 blocks, a block detail view, and a live-head indicator.
