@@ -1,0 +1,47 @@
+{
+  "$schema": "./rig.schema.json",
+  "project": {
+    "name": "be-agentic-demo",
+    "repo": "pgebheim/be-agentic-demo"
+  },
+  "runtime": {
+    "packageManager": "cargo"
+  },
+  "test": {
+    "command": "cargo test",
+    "requiresDatabase": false
+  },
+  "sourceScope": ["crates"],
+  "vcs": {
+    "defaultBranch": "main",
+    "baseRef": "origin/main",
+    "branchConvention": "{user}/{ticket}-{slug}",
+    "protectedBranchMergeQueue": false
+  },
+  "tracker": {
+    "provider": "github",
+    "team": "pgebheim",
+    "labelMapFile": ".claude/label-mapping.md",
+    "githubIntegration": false,
+    "shapeLabels": { "epic": "epic", "sprint": "sprint" },
+    "board": {
+      "owner": "pgebheim",
+      "projectNumber": 4,
+      "statusField": "Status",
+      "statusOptions": { "todo": "Todo", "inProgress": "In Progress", "done": "Done" },
+      "closingKeyword": "Closes"
+    }
+  },
+  "review": {
+    "patternsFile": ".claude/REVIEWER.md",
+    "bot": "none",
+    "maxRounds": 5
+  },
+  "agents": {
+    "debugger": "rig-debugger",
+    "reviewer": "rig-reviewer",
+    "architect": "rig-architect",
+    "qa": "rig-qa",
+    "coder": "rig-coder"
+  }
+}
