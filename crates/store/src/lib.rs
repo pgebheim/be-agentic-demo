@@ -8,7 +8,7 @@
 
 use std::collections::HashMap;
 
-use types::{Block, Digest};
+use types::{Block, Digest, Transaction};
 
 /// An in-memory, append-only store of blocks.
 #[derive(Debug, Default)]
@@ -53,6 +53,25 @@ impl BlockStore {
     pub fn head(&self) -> Option<&Block> {
         let height = self.head_height?;
         self.get_by_height(height)
+    }
+
+    /// The digest of the block with the greatest height (the chain tip), if
+    /// any.
+    pub fn head_digest(&self) -> Option<&Digest> {
+        let height = self.head_height?;
+        self.by_height.get(&height)
+    }
+
+    /// Mint the next block from `transactions`, linking `parent_digest` to
+    /// the current head (or `None` if the store is empty, i.e. genesis),
+    /// append it, and return its computed digest.
+    pub fn mint(&mut self, timestamp: u64, transactions: Vec<Transaction>) -> Digest {
+        let (height, parent_digest) = match self.head_height {
+            Some(head_height) => (head_height + 1, self.head_digest().cloned()),
+            None => (0, None),
+        };
+        let block = Block::new(height, parent_digest, timestamp, transactions);
+        self.append(block)
     }
 
     /// Number of distinct blocks in the store.
@@ -233,5 +252,66 @@ mod tests {
         store.append(b1);
 
         assert_eq!(store.head(), Some(&b2));
+    }
+
+    // -- CHN-2: mint (mint + link parent) --------------------------------
+
+    #[test]
+    fn mint_into_empty_store_yields_genesis_with_no_parent() {
+        let mut store = BlockStore::new();
+        let digest = store.mint(1_700_000_000, vec![tx("aa", "bb", 1)]);
+
+        let block = store.get_by_digest(&digest).expect("minted block should be retrievable");
+        assert_eq!(block.height, 0);
+        assert_eq!(block.parent_digest, None);
+
+        let by_height = store.get_by_height(0).expect("genesis should be at height 0");
+        assert_eq!(by_height, block);
+    }
+
+    #[test]
+    fn mint_second_block_links_to_first_via_parent_digest() {
+        let mut store = BlockStore::new();
+        let d0 = store.mint(1_700_000_000, vec![tx("aa", "bb", 1)]);
+        let d1 = store.mint(1_700_000_001, vec![tx("cc", "dd", 2)]);
+
+        let b1 = store.get_by_digest(&d1).expect("second mint should be retrievable");
+        assert_eq!(b1.height, 1);
+        assert_eq!(b1.parent_digest, Some(d0));
+    }
+
+    #[test]
+    fn minting_several_blocks_forms_a_contiguous_linked_chain() {
+        let mut store = BlockStore::new();
+        let mut digests = Vec::new();
+        for n in 0..4u64 {
+            let d = store.mint(1_700_000_000 + n, vec![tx("aa", "bb", n)]);
+            digests.push(d);
+        }
+
+        for n in 0..4u64 {
+            let block = store.get_by_height(n).unwrap_or_else(|| panic!("missing height {n}"));
+            assert_eq!(block.height, n);
+            if n == 0 {
+                assert_eq!(block.parent_digest, None, "genesis must have no parent");
+            } else {
+                assert_eq!(
+                    block.parent_digest,
+                    Some(digests[(n - 1) as usize].clone()),
+                    "block at height {n} must link to the digest of the block one height below it"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn head_and_head_digest_reflect_the_last_mint() {
+        let mut store = BlockStore::new();
+        store.mint(1_700_000_000, vec![tx("aa", "bb", 1)]);
+        store.mint(1_700_000_001, vec![tx("cc", "dd", 2)]);
+        let d_last = store.mint(1_700_000_002, vec![tx("ee", "ff", 3)]);
+
+        assert_eq!(store.head().map(|b| b.height), Some(2));
+        assert_eq!(store.head_digest(), Some(&d_last));
     }
 }
