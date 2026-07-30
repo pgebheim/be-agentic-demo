@@ -11,6 +11,10 @@ use std::collections::HashMap;
 use types::{Block, Digest, Transaction};
 
 /// An in-memory, append-only store of blocks.
+///
+/// NOTE: the store never evicts — it grows without bound. A long-running
+/// node (see the `node` crate) that mints forever will grow unboundedly;
+/// bounding/pruning is left to a later milestone.
 #[derive(Debug, Default)]
 pub struct BlockStore {
     by_digest: HashMap<Digest, Block>,
@@ -28,7 +32,10 @@ impl BlockStore {
     ///
     /// The digest is computed from a canonical encoding of the block's
     /// fields (see [`canonical_encoding`]), not supplied by the caller.
-    pub fn append(&mut self, block: Block) -> Digest {
+    ///
+    /// Private: `mint` is the only writer; nothing hands the store a
+    /// pre-built block. In-crate tests still exercise it directly.
+    fn append(&mut self, block: Block) -> Digest {
         let digest = util::digest(&canonical_encoding(&block));
         let height = block.height;
         self.by_digest.insert(digest.clone(), block);
