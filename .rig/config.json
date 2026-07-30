@@ -13,8 +13,8 @@
   },
   "sourceScope": ["crates"],
   "vcs": {
-    "defaultBranch": "main",
-    "baseRef": "origin/main",
+    "defaultBranch": "talk",
+    "baseRef": "origin/talk",
     "branchConvention": "{user}/{ticket}-{slug}",
     "protectedBranchMergeQueue": false
   },
