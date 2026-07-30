@@ -1,0 +1,4 @@
+/target
+.rig/epics/
+.rig/plan.md
+.claude/settings.local.json
