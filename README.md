@@ -6,6 +6,7 @@ The repo starts empty on purpose: a spec, and nothing else. Watch it get built.
 
 ## The talk
 
-The slides that frame this demo — *Step out of the loop* — live at
-[`docs/talk.html`](./docs/talk.html). Open it in a browser (it's a single
-self-contained file). To follow along yourself, run `/demo`.
+The slides that frame this demo — *Step out of the loop* — are published at
+**<https://pgebheim.github.io/be-agentic-demo/>** (source:
+[`docs/index.html`](./docs/index.html), a single self-contained file). To
+follow along yourself, run `/demo`.
