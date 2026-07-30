@@ -266,6 +266,9 @@
 
   /* epic run animation */
   .epic { max-width: 720px; margin: 1.5rem auto 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; box-shadow: var(--lift); }
+  .epic-cmd { display: flex; align-items: center; gap: .5rem; padding: .7rem 1rem; background: #0b1018; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: .82rem; color: #eef3f9; }
+  .epic-cmd .pr { color: var(--accent); font-weight: 700; }
+  .epic-cmd .dim { color: #66738a; }
   .epic-head { display: flex; align-items: center; gap: .55rem; padding: .8rem 1rem; border-bottom: 1px solid var(--line); }
   .epic-head .etag { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line)); border-radius: 999px; padding: .15rem .5rem; }
   .epic-head .ename { font-weight: 640; font-size: .98rem; }
@@ -633,15 +636,16 @@
   <section class="slide" id="s13">
     <div class="wrap">
       <p class="eyebrow r">rig-epic · kicked off live</p>
-      <h2 class="r">So I started the <span class="lo">next milestone.</span></h2>
+      <h2 class="r">So let's start the <span class="lo">next milestone.</span></h2>
       <div class="epic r" id="epicAnim">
+        <div class="epic-cmd"><span class="pr">&gt;</span> /rig-epic start 6 <span class="dim">·</span> /rig-epic run</div>
         <div class="epic-head"><span class="etag">epic</span><span class="ename">A chain that grows</span><span class="branch">↳ chain-grows</span></div>
         <div class="erow" data-pr="#7"><span class="ico"></span><span class="lbl"><span class="tid">CHN-1</span>block store — append + get</span><span class="chipx">Todo</span></div>
         <div class="erow" data-pr="#8"><span class="ico"></span><span class="lbl"><span class="tid">CHN-2</span>chain-append — mint + link parent</span><span class="chipx">Todo</span></div>
         <div class="erow" data-pr="#9"><span class="ico"></span><span class="lbl"><span class="tid">CHN-3</span>node — mint a block every few seconds</span><span class="chipx">Todo</span></div>
         <div class="epic-foot"><span class="fdot"></span><span class="ftext">children stack on the integration branch…</span></div>
       </div>
-      <p class="foot r">One command started it. It runs the children in dependency order and squashes to <code>main</code> when they're clean — no one driving.</p>
+      <p class="foot r">One command starts it. It runs the children in dependency order and squashes to <code>main</code> when they're clean — no one driving.</p>
     </div>
   </section>
 
